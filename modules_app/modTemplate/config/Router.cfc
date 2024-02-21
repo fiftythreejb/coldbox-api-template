@@ -2,8 +2,8 @@ component{
 
 	function configure(){
 		patch("/").to("modTemplate.update");
-		route(pattern="/:action").toHandler("modTemplate");
 		get(pattern = "/", target = "modTemplate.index");
+		route(pattern="/:action").toHandler("modTemplate");
 		route( "/:handler/:action?").end();
 	}
 

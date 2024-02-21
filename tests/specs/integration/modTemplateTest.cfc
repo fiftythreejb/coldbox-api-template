@@ -40,32 +40,24 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 			beforeEach(function( currentSpec ){
 				// Setup as a new ColdBox request for this suite, VERY IMPORTANT. ELSE EVERYTHING LOOKS LIKE THE SAME REQUEST.
 				setup();
-				var event = this.post(
-					route  = "/api/login",
-					params = {username : "admin@coldbox.org", password : "admin"}
-				);
-				var response = event.getPrivateValue("Response");
-				var repData = response.getData();
-				setAuthToken(repData.access_token);
-				debug(getAuthToken());
 			});
 
 			beforeAll(function(currentSpec){
-				
 			});
 
-			it("index", function(){
+			it("Run index: list items", function(){
                 // Execute event or route via GET http method. Spice up accordingly
 				var event = get(event = "modTemplate:modTemplate.index", params = {});
 				var response = event.getPrivateValue( "Response" );
 				var repData = response.getData();
 				// expectations go here.
-				expect(response.getError()).toBeFalse( response.getMessages().toString());
-				expect(response.getStatusCode()).toBe(200);
+				expect(response.getError()).toBeFalse(response.getMessages().toString());
+				expect(response.getStatusCode()).toBe(200, response.getMessages().toString());
 			});
 
 			it("create", function(){
 				// $assert.skip('A create event in an integration test should not create records that can impact the system, Ensure you clean up an test data.');
+				runAuth();
 				variables.newRecordValue = 'New Record';
 				var event = post(
 					event = "modTemplate:modTemplate.create", 
@@ -81,6 +73,8 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 
 			it("show", function(){
                 // Execute event or route via GET http method. Spice up accordingly
+				runAuth();
+				
 				var event = get(event = "modTemplate:modTemplate.show", params = {id = variables.newRecordId});
 				var response = event.getPrivateValue("Response");
 				var repData = response.getData();
@@ -92,6 +86,7 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 
 			it("update", function(){
 				// $assert.skip('An update event in an integration test should not modify records that can impact the system. If you are using the create test, you can modify the test data here.');
+				runAuth();
 				var event = post(
 					event = "modTemplate:modTemplate.update", 
 					params = {id = variables.newRecordId, title = variables.newRecordValue}
@@ -116,7 +111,18 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 
 
 		});
-
 	}
+
+	private void function runAuth() {
+		// if (getAuthToken().len()) {return;}
+		var event = this.post(
+			route  = "/api/login",
+			params = {username : "admin@coldbox.org", password : "admin"}
+		);
+		var response = event.getPrivateValue("Response");
+		var repData = response.getData();
+		setAuthToken(repData.access_token);
+		debug(getAuthToken());
+	} 
 
 }
