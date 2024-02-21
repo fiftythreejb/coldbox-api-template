@@ -1,0 +1,36 @@
+# General Ignores + IDE
+.DS_Store
+settings.xml
+WEB-INF
+.vscode/
+.cflintrc
+.markdownlint.json
+
+# Engines + Database + CBFS + Secrets
+.env
+.engine/**
+.cbfs/**
+build/.db/**
+
+# logs + tests
+logs/**
+tests/results/**
+
+# npm
+**/node_modules/*
+npm-debug.log
+yarn-error.log
+
+## Ignored Dependencies
+/coldbox/**
+/testbox/**
+/modules/**
+logs/
+
+
+
+## Templates
+# /modules_app/modTemplate
+# /tests/specs/integration/modTemplateTest.cfc
+# /tests/specs/unit/modTemplateTest.cfc
+# /tests/specs/unit/modTemplateServiceTest.cfc

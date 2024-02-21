@@ -1,0 +1,32 @@
+{
+	"app":{
+        "cfengine":"lucee@5.3.10.120"
+    },
+    "name":"api-cb-template",
+    "web":{
+        "host":"127.0.0.1",
+        "http":{
+            "port":"8080"
+        }
+    },
+	"cacheDefaultObject":"coldbox",
+    "debuggingEnabled":true,
+    "debuggingReportExecutionTimes":false,
+    "disableInternalCFJavaComponents":false,
+	"requestTimeoutEnabled":true,
+	"requestTimeout":"0,0,5,0",
+	"robustExceptionEnabled":true,
+    "caches":{
+		"coldbox":{
+			"storage":"true",
+            "type":"RAM",
+            "custom":{
+				"timeToIdleSeconds":"1800",
+                "timeToLiveSeconds":"3600"
+            },
+            "class":"lucee.runtime.cache.ram.RamCache",
+            "readOnly":"false"
+        }
+    },
+	"whitespaceManagement":"white-space-pref"
+}

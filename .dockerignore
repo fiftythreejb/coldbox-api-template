@@ -1,0 +1,13 @@
+# All the files to ignore from the docker image
+.engine
+.github
+.vscode
+.DS_Store
+.dockerignore
+tests
+
+## JB Tests
+modules_app/modTemplate
+tests/specs/integration/modTemplateTest.cfc
+tests/specs/unit/modTemplateTest.cfc
+tests/specs/unit/modTemplateServiceTest.cfc

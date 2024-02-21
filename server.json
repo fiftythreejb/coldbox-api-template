@@ -1,0 +1,8 @@
+{
+    "name":"api_template",
+    "web":{
+        "rewrites":{
+            "enable":true
+        }
+    }
+}
