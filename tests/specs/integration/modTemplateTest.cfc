@@ -55,7 +55,7 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 				expect(response.getStatusCode()).toBe(200, response.getMessages().toString());
 			});
 
-			it("create", function(){
+			it("Run create: insert record", function(){
 				// $assert.skip('A create event in an integration test should not create records that can impact the system, Ensure you clean up an test data.');
 				runAuth();
 				variables.newRecordValue = 'New Record';
@@ -75,7 +75,7 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
                 // Execute event or route via GET http method. Spice up accordingly
 				runAuth();
 				
-				var event = get(event = "modTemplate:modTemplate.show", params = {id = variables.newRecordId});
+				var event = get(event = "modTemplate:modTemplate.show", params = {id = variables.newRecordId, 'x-auth-token': getAuthToken()});
 				var response = event.getPrivateValue("Response");
 				var repData = response.getData();
 
@@ -89,7 +89,7 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 				runAuth();
 				var event = post(
 					event = "modTemplate:modTemplate.update", 
-					params = {id = variables.newRecordId, title = variables.newRecordValue}
+					params = {id = variables.newRecordId, title = variables.newRecordValue/* , 'x-auth-token': getAuthToken() */}
 				);
 				var response = event.getPrivateValue("Response");
 				var repData = response.getData();
@@ -100,8 +100,9 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 
 			it("delete", function(){
 				$assert.skip('If you are using the create test, you can clean up an test data here.');
+				runAuth();
                 // Execute event or route via GET http method. Spice up accordingly
-				var event = get(event = "modTemplate:modTemplate.delete", params = {id = variables.newRecordId});
+				var event = get(event = "modTemplate:modTemplate.delete", params = {id = variables.newRecordId, 'x-auth-token': getAuthToken()});
 				var response = event.getPrivateValue("Response");
 				var repData = response.getData();
 
@@ -114,7 +115,7 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 	}
 
 	private void function runAuth() {
-		// if (getAuthToken().len()) {return;}
+		if (getAuthToken().len()) {return;}
 		var event = this.post(
 			route  = "/api/login",
 			params = {username : "admin@coldbox.org", password : "admin"}

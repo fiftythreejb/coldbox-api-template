@@ -11,51 +11,21 @@
 version: "3.9"
 services:
 
-  # mssql:
-  #   image: mcr.microsoft.com/azure-sql-edge:latest
-  #   ports:
-  #     - "1434:1433"
-  #   environment:
-  #     SA_PASSWORD: "T35t1ng1234!"
-  #     ACCEPT_EULA: "Y"
-  #   volumes:
-  #     - .db/mssql/tmp:/tmp/mssql
-
-  # MySQL Server 8
-  # api_db:
-  #   image: mysql:8.0.35-debian
-  #   ports:
-  #     - "3306:3306"
-  #   environment:
-  #     MYSQL_DATABASE: ${DB_DATABASE}
-  #     MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-  #   volumes:
-  #     # Store the data locally
-  #     - .db/mysql8/data:/var/lib/mysql
-      # You can uncomment and it will seed the db with our prepared sql data
-      #- ../resources/sql/mysql:/docker-entrypoint-initdb.d
-
   # ColdBox Site
   api_template_app:
+    container_name: ${APPNAME}
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile
+    env_file:
+      - ./.env
     # depends_on:
     #   - api_db
     image: ortussolutions/commandbox:lucee5
     # Environment Variables
     environment:
       CFCONFIG_ADMINPASSWORD: ${APP_PASSWORD}
-      ENVIRONMENT: DEVELOPMENT
-      # JWT_SECRET: mySecret
-      # DB_HOST: api_db
-      # DB_PORT: 4306
-      # DB_DATABASE: api
-      # DB_DRIVER: MySQL
-      # DB_USER: ${DB_USER}
-      # DB_PASSWORD: ${DB_PASSWORD}
-      # DB_CLASS: ${DB_CLASS}
-      # DB_BUNDLEVERSION: ${DB_BUNDLEVERSION}
-      # DB_BUNDLENAME: ${DB_BUNDLENAME}
-      # DB_CONNECTIONSTRING: jdbc:mysql://127.0.0.1:3306/coldbox?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useLegacyDatetimeCode=true
-    # Ports
+      ENVIRONMENT: ${ENVIRONMENT}
     ports:
       - "8080:8080"
       - "8443:8443"

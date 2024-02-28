@@ -32,7 +32,7 @@ component extends="coldbox.system.RestHandler" {
 	 * @response -default ~echo/whoami/responses.json##200
 	 * @response -401     ~echo/whoami/responses.json##401
 	 */
-	function whoami( event, rc, prc ) secured{
+	function whoami( event, rc, prc ) secured {
 
 		event.getResponse().setData( jwtAuth().getUser().getMemento() );
 	}

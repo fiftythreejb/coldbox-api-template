@@ -5,6 +5,7 @@ WEB-INF
 .vscode/
 .cflintrc
 .markdownlint.json
+_postman
 
 # Engines + Database + CBFS + Secrets
 .env
