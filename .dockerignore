@@ -1,10 +1,21 @@
 # All the files to ignore from the docker image
-.engine
+# General Ignores + IDE
 .github
 .vscode
 .DS_Store
 .dockerignore
-tests
+Thumbs.db
+settings.xml
+.cflintrc
+.markdownlint.json
+_postman
+
+# Engines + Database + CBFS + Secrets
+.engine
+
+# logs + tests
+tests/results/**
+logs/
 
 ## JB Tests
 modules_app/modTemplate

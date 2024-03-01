@@ -61,9 +61,10 @@
 		 * --------------------------------------------------------------------------
 		 */
 		settings = {
-			datasource: 'dbName',
+			dsn: {
+				documents: 'documents'
+			},
 			pepper: 'E6E0F3E4D022ECFE74674082BD073642A57C2322F976E9F148A953AAB5A1E3935E784389A98962DFB4A3181616502FB2EA0A8092BA836EB346C83ECE40C3A633'
-
 		};
 
 		/**

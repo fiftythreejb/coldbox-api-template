@@ -1,11 +1,11 @@
 # General Ignores + IDE
 .DS_Store
+Thumbs.db
 settings.xml
 WEB-INF
 .vscode/
 .cflintrc
 .markdownlint.json
-_postman
 
 # Engines + Database + CBFS + Secrets
 .env
@@ -14,7 +14,6 @@ _postman
 build/.db/**
 
 # logs + tests
-logs/**
 tests/results/**
 
 # npm
@@ -27,8 +26,6 @@ yarn-error.log
 /testbox/**
 /modules/**
 logs/
-
-
 
 ## Templates
 # /modules_app/modTemplate

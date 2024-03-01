@@ -1,7 +1,4 @@
 {
-	"app":{
-        "cfengine":"lucee@5.3.10.120"
-    },
     "name":"api-cb-template",
     "web":{
         "host":"127.0.0.1",
@@ -28,5 +25,24 @@
             "readOnly":"false"
         }
     },
-	"whitespaceManagement":"white-space-pref"
+	"whitespaceManagement":"white-space-pref",
+	"datasources":{
+		"Documents":{
+            "blob":"false",
+            "class":"oracle.jdbc.OracleDriver",
+			"bundleName": "org.lucee.oracle", 
+			"bundleVersion": "21.8.0.0-ojdbc8",
+            "dbdriver":"Oracle",
+            "clob":"false",
+            "connectionLimit":"-1",
+            "connectionTimeout":"20",
+            "host":"${DOCUMENTS_HOST}",
+            "port":"${DOCUMENTS_PORT}",
+            "database":"${DOCUMENTS_DATABASE}",
+            "connectionString":"jdbc:oracle:thin:@{host}:{port}:{database}",
+            "username":"${DOCUMENTS_USERNAME}",
+            "password":"${DOCUMENTS_PASSWORD}",
+            "validate":"true"
+        }
+	}
 }

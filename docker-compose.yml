@@ -9,26 +9,28 @@
 # - We give you three databases for you to choose from below: MySQL 8, PostgreSQL, Azure MSSQL
 ################################################################################
 version: "3.9"
+
 services:
 
   # ColdBox Site
-  api_template_app:
+  wha-coldfusion-api:
     container_name: ${APPNAME}
     build:
-      context: ..
-      dockerfile: ./build/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     env_file:
-      - ./.env
+      - .env
     # depends_on:
     #   - api_db
     image: ortussolutions/commandbox:lucee5
     # Environment Variables
     environment:
-      CFCONFIG_ADMINPASSWORD: ${APP_PASSWORD}
+      CFCONFIG_ADMINPASSWORD: ${CFCONFIG_ADMINPASSWORD}
       ENVIRONMENT: ${ENVIRONMENT}
+      TZ: "America/Los_Angeles"
     ports:
       - "8080:8080"
       - "8443:8443"
     # Data & Overrides
     volumes:
-      - ../:/app
+      - ./:/app
