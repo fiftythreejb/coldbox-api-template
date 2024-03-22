@@ -37,5 +37,7 @@ RUN cd ${APP_DIR} && box install --production
 # WARM UP THE SERVER
 RUN ${BUILD_DIR}/util/warmup-server.sh
 
+RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
+
 # Run it
 CMD $BUILD_DIR/run.sh

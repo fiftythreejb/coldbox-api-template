@@ -21,7 +21,6 @@
         "relax":"^4.1.0",
         "route-visualizer":"*",
         "commandbox-dotenv":"*",
-        "commandbox-cfconfig":"*",
         "commandbox-cfformat":"*"
     },
     "installPaths":{
@@ -32,14 +31,17 @@
         "route-visualizer":"modules/route-visualizer/",
         "mementifier":"modules/mementifier/",
         "cbvalidation":"modules/cbvalidation/",
-        "BCrypt":"modules/BCrypt/"
+        "BCrypt":"modules/BCrypt/",
+        "cors":"modules/cors/"
     },
     "dependencies":{
         "coldbox":"^7.0.0",
         "cbsecurity":"^3.0.0",
         "mementifier":"^3.3.0",
         "cbvalidation":"^4.1.0",
-        "BCrypt":"^3.1.0+4"
+        "BCrypt":"^3.1.0+4",
+        "commandbox-cfconfig":"*",
+        "cors":"^3.0.9"
     },
     "scripts":{}
 }

@@ -27,7 +27,7 @@ services:
     environment:
       CFCONFIG_ADMINPASSWORD: ${CFCONFIG_ADMINPASSWORD}
       ENVIRONMENT: ${ENVIRONMENT}
-      TZ: "America/Los_Angeles"
+      TZ: ${TZ}
     ports:
       - "8080:8080"
       - "8443:8443"
