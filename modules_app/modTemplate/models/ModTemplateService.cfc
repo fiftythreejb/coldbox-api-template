@@ -17,6 +17,11 @@ component singleton accessors="true" extends="base.models.service" displayname="
 	 * @return modTemplate.models.ModTemplateService instance
 	 */
 	public modTemplate.models.ModTemplateService function init(){
+		super.init();
+
+		if( isNull( getModelCache() ) ) {
+			setModelCache( new base.models.cache( entity = "modTemplateCache" ) );
+		}
 		return this;
 	}
 
@@ -40,6 +45,9 @@ component singleton accessors="true" extends="base.models.service" displayname="
 	 */
 	public query function filter(
 		string returnColumns = "list, of, columns",
+		boolean cache = true,
+		boolean clearCache = false,
+		string cacheTime = '60',
 		numeric id,
 		date createdOn,
 		date updatedOn,
@@ -50,8 +58,46 @@ component singleton accessors="true" extends="base.models.service" displayname="
 		numeric start,
 		numeric length
 	) {
+		// check if we're caching the query
+		if( arguments.cache ) {
+			// duplicate the arguments
+			var args = duplicate( arguments );
 
-		return getDao().filter(argumentCollection = arguments);
+			// remove cache arguments from duplicate
+			structDelete( args, 'cache' );
+			structDelete( args, 'clearCache' );
+			structDelete( args, 'cacheTime' );
+
+			// set the cache item name
+			var cacheItemName = hash( serializeJson( args ), 'MD5', 'UTF-8' );
+
+			// check if we're not clearing the cache
+			if( !arguments.clearCache ) {
+				// we aren't, get the query from the cache
+				var cachedQuery = getModelCache().get( cacheItemName );
+				// check if we have this query cached
+				if( !isNull( cachedQuery ) ) {
+					// we do, return the cached query
+					return cachedQuery;
+				}
+			}
+		}
+
+		// we don't have a cached query or aren't using cache, get the data from the dao
+		var cachedQuery = getDao().filter( argumentCollection = arguments );
+
+		// check if we're caching this query
+		if( arguments.cache ) {
+			// we are, set this query into the cache
+			getModelCache().set(
+				objectKey = cacheItemName,
+				object = cachedQuery,
+				timeout = arguments.cacheTime
+			);
+		}
+
+		// return the query from the dao
+		return cachedQuery;
 	}
 
 	/**
