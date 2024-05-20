@@ -43,6 +43,26 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 			});
 
 			beforeAll(function(currentSpec){
+				getRequestContext().$reset();
+			});
+
+			it("Can authenticate", function(){
+				if (getAuthToken().len()) {
+					$assert.skip('Authentication not needed');
+				}
+				// Execute event or route via POST http method.
+				var event = post(route  = "/api/login", params = {username : "admin@coldbox.org", password : "admin"});
+				// Get the response data to test
+				var response = event.getPrivateValue("Response");
+				var repData = response.getData();
+
+				// expectations go here.
+				expect(response.getStatusCode()).toBe(200, response.getMessages().toString());
+				expect(response.getError()).toBeFalse(response.getMessages().toString());
+				expect(repData.len()).toBeGT(1);
+
+				// set token for future requests
+				setAuthToken(repData.access_token);
 			});
 
 			it("Run index: list items", function(){
@@ -51,8 +71,8 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 				var response = event.getPrivateValue( "Response" );
 				var repData = response.getData();
 				// expectations go here.
-				expect(response.getError()).toBeFalse(response.getMessages().toString());
 				expect(response.getStatusCode()).toBe(200, response.getMessages().toString());
+				expect(response.getError()).toBeFalse(response.getMessages().toString());
 			});
 
 			it("Run create: insert record", function(){
@@ -66,8 +86,8 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 				var response = event.getPrivateValue("Response");
 				var repData = response.getData();
 				variables.newRecordId = repData.id;
-				expect(response.getError()).toBeFalse(response.getMessages().toString());
 				expect(response.getStatusCode()).toBe(200, 'Invalid request response: #response.getStatusCode()#');
+				expect(response.getError()).toBeFalse(response.getMessages().toString());
 				expect(repData.title).toBe(variables.newRecordValue, 'Invalid title');
 			});
 
@@ -79,8 +99,8 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 				var response = event.getPrivateValue("Response");
 				var repData = response.getData();
 
-				expect(response.getError()).toBeFalse(response.getMessages().toString());
 				expect(response.getStatusCode()).toBe(200, 'Invalid request response: #response.getStatusCode()#');
+				expect(response.getError()).toBeFalse(response.getMessages().toString());
 				expect(repData.title).toBe(variables.newRecordValue, 'Invalid title');
 			});
 
@@ -89,13 +109,13 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 				runAuth();
 				var event = post(
 					event = "modTemplate:modTemplate.update", 
-					params = {id = variables.newRecordId, title = variables.newRecordValue/* , 'x-auth-token': getAuthToken() */}
+					params = {id = variables.newRecordId, title = variables.newRecordValue, 'x-auth-token': getAuthToken()}
 				);
 				var response = event.getPrivateValue("Response");
 				var repData = response.getData();
 
-				expect(response.getError()).toBeFalse(response.getMessages().toString());
 				expect(response.getStatusCode()).toBe(200, 'Invalid request response: #response.getStatusCode()#');
+				expect(response.getError()).toBeFalse(response.getMessages().toString());
 			});
 
 			it("delete", function(){
@@ -106,8 +126,8 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 				var response = event.getPrivateValue("Response");
 				var repData = response.getData();
 
-				expect(response.getError()).toBeFalse(response.getMessages().toString());
 				expect(response.getStatusCode()).toBe(200, 'Invalid request response: #response.getStatusCode()#');
+				expect(response.getError()).toBeFalse(response.getMessages().toString());
 			});
 
 
@@ -115,12 +135,21 @@ component extends="coldbox.system.testing.BaseTestCase" accessors="true" autowir
 	}
 
 	private void function runAuth() {
-		if (getAuthToken().len()) {return;}
-		var event = this.post(
+		if (getAuthToken().len()) {
+			debug('exists');
+			return;
+		}
+		var event = post(
 			route  = "/api/login",
 			params = {username : "admin@coldbox.org", password : "admin"}
 		);
 		var response = event.getPrivateValue("Response");
+
+		if (response.getError() == true) {
+			debug(response);
+			throw(response.getMessages().toString());
+		}
+		
 		var repData = response.getData();
 		setAuthToken(repData.access_token);
 		debug(getAuthToken());

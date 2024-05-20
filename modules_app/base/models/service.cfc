@@ -1,7 +1,19 @@
 
-component displayname="base.service" singleton {
+component displayname="base.service" accessors="true" singleton {
+
+	property name="cacheFactory" inject="cacheBox";
+	property name="entityName" default="";
+	property name="modelCache";
 
 	public function init() {
+		setEntityName(getMetaData(this).displayname);
+		setCacheFactory(application.cbController.getCachebox());
+
+		if (!getCacheFactory().cacheExists(getEntityName())) {
+			getCacheFactory().addDefaultCache(getEntityName());
+		}
+		setModelCache(getCacheFactory().getCache(getEntityName())); 
+		
 		return this;
 	}
 
@@ -11,10 +23,8 @@ component displayname="base.service" singleton {
 	 * @referenceBean any						 The bean (by reference)
 	 *
 	 */
-	public void function load( required any referenceBean ) {
-
-		getDao().read( argumentCollection = arguments );
-
+	public void function load(required any referenceBean) {
+		getDao().read(argumentCollection = arguments);
 	}
 
 	/**

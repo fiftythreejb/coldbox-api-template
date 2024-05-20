@@ -19,40 +19,56 @@ component accessors="true" {
 	}
 
 	/**
-	* @displayname 	get
-	* @description 	I get an entity from the entities cache
-	* @itemName 	I am the name of the item stored in cache
-	* @return		any
-	*/
-	public any function get(
-		required string itemName
-	) {
-		// do a standard cacheGet() for this entities cache region
-		return cacheGet( getEntity() & arguments.itemName );
+	 * Get an object from the store, or null if not found
+	 *
+	 * @objectKey The key to retrieve
+	 */
+	public any function get( required objectKey ){		
+		return cacheGet( getEntity() & arguments.objectKey );
 	}
 
 
 	/**
-	* @displayname 	set
-	* @description 	I put an entity into the entities cache
-	* @itemName 	I am the name of the item stored in cache
-	* @item 		I am the item to store in the cache (struct, array, object, string, etc.)
-	* @cacheTime 	I am a human readable number of days, hours, minutes and seconds in the format: Xd Xh Xm Xs
-	*/
-	public void function set(
-		required string itemName,
-		required any item,
-		string cacheTime = "15m"
+	 * Sets an object in the storage
+	 *
+	 * @objectKey         The object key
+	 * @object            The object to save
+	 * @timeout           Timeout in minutes, or cacheTime format (0d 0h 0m 0s)
+	 * @lastAccessTimeout Idle Timeout in minutes, or cacheTime format (0d 0h 0m 0s)
+	 * @extras            Not implemented. Here for compatibility with CacheBox only.
+	 */
+	void function set(
+		required objectKey,
+		required object,
+		timeout           = "",
+		lastAccessTimeout = "",
+		extras            = {}
 	) {
-		// get the timespan for the cacheTime passed in
-		var ttl = getTimespanFromCacheTime( arguments.cacheTime );
+
+		if( findOneOf( 'dhms', arguments.timeout ) ) {
+			// get the timespan for the timeout passed in
+			ttl = getTimespanFromCacheTime( arguments.timeout );
+		} else if( isNumeric( arguments.timeout ) ) {
+			ttl = createTimeSpan( 0, 0, arguments.timeout, 0 );
+		} else {
+			ttl = createTimeSpan( 0, 0, 15, 0 );
+		}
+		
+		if( findOneOf( 'dhms', lastAccessTimeout ) ) {
+			// get the timespan for the lastAccessTimeout passed in
+			lattl = getTimespanFromCacheTime( arguments.lastAccessTimeout );
+		} else if( isNumeric( arguments.lastAccessTimeout ) ) {
+			lattl = createTimeSpan( 0, 0, arguments.lastAccessTimeout, 0 );
+		} else {
+			lattl = int( ttl/2 );
+		}
 
 		// put the item into the cache
 		cachePut(
-			getEntity() & arguments.itemName,
-			arguments.item,
+			getEntity() & arguments.objectKey,
+			arguments.object,
 			ttl,
-			( ttl / 2 )
+			lattl
 		);
 	}
 

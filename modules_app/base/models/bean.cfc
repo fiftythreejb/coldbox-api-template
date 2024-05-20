@@ -207,8 +207,12 @@ component output="false" displayname="base.bean" accessors="true"  {
 
 		// loop through the components properties to assign properties values based on input struct
 		for( colKey in arguments.beanData ) {
+			// remove d_ from field names if there are any
+			var d_Index = colKey.listFindNoCase('d', '_');
+			colKeyNoUnderscores = d_Index > 0 ? listDeleteAt(colKey, d_Index, '_') : colKey;
+			
 			// remove _ from field names if there are any
-			colKeyNoUnderscores = find( '_', colKey ) ? replace( colKey, '_', '', 'ALL' ) : colKey;
+			colKeyNoUnderscores = find( '_', colKeyNoUnderscores ) ? replace( colKeyNoUnderscores, '_', '', 'ALL' ) : colKeyNoUnderscores;
 
 			// check if the attribute exists in the input struct
 			if( beanColumnArray.findNoCase( colKeyNoUnderscores ) and len( trim( arguments.beanData[ colKey ] ) ) ) {
