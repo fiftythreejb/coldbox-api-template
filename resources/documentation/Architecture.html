@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>View Source</title>
+	<link rel="canonical" href="/wiki/pages/viewpage.action?pageId=$action.page.id" />
+	<script nonce="61622efc1bd44e09903faae47d213008">
+		window.WRM = window.WRM || {}; window.WRM._unparsedData = window.WRM._unparsedData || {}; window.WRM._unparsedErrors = window.WRM._unparsedErrors || {};
+		WRM._unparsedData["com.atlassian.plugins.atlassian-plugins-webresource-plugin:context-path.context-path"] = "\"/wiki\"";
+		WRM._unparsedData["com.atlassian.plugins.atlassian-plugins-webresource-rest:curl.cross-origin-resources"] = "false";
+		if (window.WRM._dataArrived) window.WRM._dataArrived();</script>
+	
+
+</head>
+
+<body class="mceContentBody aui-theme-default wiki-content fullsize">
+	<p>&nbsp;</p>
+	<div class="contentLayout2">
+		<div class="columnLayout two-equal" data-layout="two-equal">
+			<div class="cell normal" data-type="normal">
+				<div class="innerCell">
+					<h2>What is HMVC</h2>
+					<p><strong>Reference Summary: </strong><br /><a
+							href="https://coldbox.ortusbooks.com/readme/what-is-mvc"
+							data-card-appearance="inline">https://coldbox.ortusbooks.com/readme/what-is-mvc</a> </p>
+					<p>The HMVC pattern cleanly separates code into logical pieces to separate business logic, data
+						layer, and presentation code. This allows easier maintenance, testing, debugging and feature
+						development as well as improve code reuse. Each feature set can be divided into standalone
+						modules that can be called by convention to integrate into other modules.</p>
+				</div>
+			</div>
+			<div class="cell normal" data-type="normal">
+				<div class="innerCell">
+					
+				</div>
+			</div>
+		</div>
+		<div class="columnLayout fixed-width" data-layout="fixed-width">
+			<div class="cell normal" data-type="normal">
+				<div class="innerCell">
+					<h3>Convention</h3>
+					<p>The ColdBox framework is built to wire up modules and functionality based on where you put each
+						of these pieces. This reduces the need for boilerplate code to get your modules up and running.
+					</p>
+					<h3>Hierarchical, Model, View, Controller</h3>
+					<ul>
+						<li>
+							<p>hierarchical - you can nest your code modules inside one another</p>
+						</li>
+						<li>
+							<p>model - this contains your business logic, cfScript components that define logic, data
+								layer and manipulation of the data-layer.</p>
+						</li>
+						<li>
+							<p>view - this is you UI layer generally built primarily with HTML and some CFML for dynamic
+								pieces and variables.</p>
+						</li>
+						<li>
+							<p>controller - this CF component is generally referred to as a handler. Define the
+								presentation needs for each route of the module. This ushers the data into the form
+								needed for the view. </p>
+						</li>
+					</ul>
+					<h3>Our MVC Layout &amp; Examples</h3>
+					<p>The application modules are located (by convention) in the <code>moldules_app</code> folder. Your
+						module will be contained in a folder with the name of your module (our module template module
+						pictured - right).</p>
+				</div>
+			</div>
+		</div>
+		<div class="columnLayout two-right-sidebar" data-layout="two-right-sidebar">
+			<div class="cell normal" data-type="normal">
+				<div class="innerCell">
+					<h4><strong>Module Structure:</strong></h4>
+					<ul>
+						<li>
+							<p>A config file is placed at the root of this folder called MuduleConfig.cfc. This file
+								sets up the options for your module allowing it to be registered to the framework on
+								application start.</p>
+						</li>
+						<li>
+							<p>Config - config files like routes.</p>
+							<ul>
+								<li>
+									<p>Routes will define the paths of your application. By default, ColdBox creates
+										default routes based on your module and handler by convention.</p>
+									<ul>
+										<li>
+											<p>Default: base-URL/moduleName/handlerName/handlerMethodName</p>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Handlers - Controller files: methods(actions) that will be executed as to serve the
+								visual representation of your route.</p>
+							<ul>
+								<li>
+									<p>The action will process will intake any variables needed from the request and
+										application and format it for the view that it calls</p>
+								</li>
+								<li>
+									<p>Views will be called by convention (module is implied / modulesViewsFolder /
+										handlerName handlerActionName.cfm) and can be overridden</p>
+								</li>
+								<li>
+									<p>In our case, we don't use to many views. We let the framework auto format and
+										output our data into a response JSON object.</p>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<p>Views - .cfm files containing mostly HTML and some CFML to display the needed UI.</p>
+						</li>
+						<li>
+							<p>Models - this folder contains our data layer, data object, and services.</p>
+							<ul>
+								<li>
+									<p>We have set up some base models that we extend to reduce boilerplate code.</p>
+									<ul>
+										<li>
+											<p>Bean (optional) - an object that can be used to provide state and
+												behavior for a data object.</p>
+											<ul>
+												<li>
+													<p>We have built out several methods that are extended from the base
+														bean</p>
+												</li>
+											</ul>
+										</li>
+										<li>
+											<p>DAO - our data layer that provides access to external datasources.</p>
+											<ul>
+												<li>
+													<p>This includes several CRUD methods extended from base service.
+													</p>
+												</li>
+												<li>
+													<p>Interfaces with the modules bean as needed</p>
+												</li>
+											</ul>
+										</li>
+										<li>
+											<p>Service - Contains the business logic for the application and manipulates
+												the data.</p>
+											<ul>
+												<li>
+													<p>This includes may CRUD methods from the extended base service.
+													</p>
+												</li>
+												<li>
+													<p>interfaces with the DAO and bean</p>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="cell aside" data-type="aside">
+				<div class="innerCell">
+					
+			</div>
+		</div>
+		<div class="columnLayout fixed-width" data-layout="fixed-width">
+			<div class="cell normal" data-type="normal">
+				<div class="innerCell">
+					<h4>Examples</h4>
+				</div>
+			</div>
+		</div>
+		<div class="columnLayout three-equal" data-layout="three-equal">
+			<div class="cell normal" data-type="normal">
+				<div class="innerCell">
+					<h5>Module Service</h5>
+					<p>Extends the base service and uses WireBox injection to lazy load the DAO. Gets the related module
+						bean and connects to the DAO to get lists, a populated bean, and access to CRUD operations.</p>
+					
+				</div>
+			</div>
+			<div class="cell normal" data-type="normal">
+				<div class="innerCell">
+					<h5>Module DAO</h5>
+					<p>Extends the base DAO and provides CRUD operations for the data source. This interacts with the
+						bean to provide the populated data object.</p>
+				</div>
+			</div>
+			<div class="cell normal" data-type="normal">
+				<div class="innerCell">
+					<h5>Module Bean</h5>
+					<p>(optional) Extends the base bean to provide the specific properties for the related data model.
+						The base bean provides the base methods for population, getting the memento and hashing. Used to
+						add methods required for the related data model.</p>
+					<p />
+				</div>
+			</div>
+		</div>
+		<div class="columnLayout fixed-width" data-layout="fixed-width">
+			<div class="cell normal" data-type="normal">
+				<div class="innerCell">
+					<h2>Caching</h2>
+					<p><a href="https://wirebox.ortusbooks.com/getting-started/getting-jiggy-wit-it/scoping#scope-annotations"
+							data-card-appearance="inline">https://wirebox.ortusbooks.com/getting-started/getting-jiggy-wit-it/scoping#scope-annotations</a>
+					</p>
+					<p>Coldbox caches files based on the <code>singleton</code> methodology. Components with the
+						singleton attribute will be cached based on the policy set in the ColdBox config file. We also
+						have caching enabled for data as needed though the extended base service.</p>
+					<h2>Injection </h2>
+					<p><a href="https://wirebox.ortusbooks.com/getting-started/overview#dependency-injection-explained"
+							data-card-appearance="inline">https://wirebox.ortusbooks.com/getting-started/overview#dependency-injection-explained</a>
+					</p>
+					<p>the built in Wirebox module provides an injection methodology to call components and services
+						throughout the app.</p>
+					<h2>CommandBox</h2>
+					<p><strong>Reference Summary:</strong> <a href="https://commandbox.ortusbooks.com/overview"
+							data-card-appearance="inline">https://commandbox.ortusbooks.com/overview</a> </p>
+					<p>Similar to NPM, Grunt/Gulp, Maven, Bower, and Node, CommandBox is a standalone, native Command
+						Line Interface (CLI), Package Manager, Embedded CFML Server and and more, built to improve CFML
+						development, productivity, enhance automation, provide dependency management, and command
+						line-based tools.</p>
+					<h3>Our Primary Uses</h3>
+					<ul>
+						<li>
+							<p>Runs our CFML engine inside of our docker container</p>
+						</li>
+						<li>
+							<p>manages our ColdBox packages - Installs, updates, dependencies</p>
+						</li>
+						<li>
+							<p>Can be used for scaffolding apps and modules </p>
+						</li>
+						<li>
+							<p>Starting up a local server to test the app</p>
+						</li>
+					</ul>
+					<h4>To start a local dev server</h4>
+					<ol start="1">
+						<li>
+							<p>Install the modular CommandBox executable in a central location on your system</p>
+						</li>
+						<li>
+							<p>Pull the repository from Bitbucket</p>
+						</li>
+						<li>
+							<p>copy the <code>env.example</code> file and customize any settings</p>
+						</li>
+						<li>
+							<p>Run CommandBox by either</p>
+							<ol start="1">
+								<li>
+									<p>opening a terminal instance and navigating to the root of your project and run
+										the executable using the full path of the box.exe file</p>
+								</li>
+								<li>
+									<p>run the box.exe file and navigate to the rood of your project</p>
+								</li>
+							</ol>
+						</li>
+						<li>
+							<p>type <code>start</code> and enter to spin up the cf server that is already configured in
+								the <code>.cfconfig.json</code> file.</p>
+						</li>
+					</ol>
+					<h4>Create a ColdBox Module</h4>
+					<ol start="1">
+						<li>
+							<p><code>coldbox create module &lt;moduleName&gt;</code> This will create the basics needed
+								to begin a module. </p>
+						</li>
+						<li>
+							<p>Can also copy the <code>ModTemplate </code>folder and update the names and settings.</p>
+						</li>
+					</ol>
+					<p />
+				</div>
+			</div>
+		</div>
+	</div>
+	<p>&nbsp;</p>
+</body>
+
+</html>
