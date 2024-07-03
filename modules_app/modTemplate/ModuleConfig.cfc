@@ -68,7 +68,7 @@ component {
 	 */
 	function configure(){
 
-		variables.layoutSettings = { defaultLayout : "", defaultView : "" };
+		layoutSettings = { defaultLayout : "", defaultView : "" };
 
 		// parent settings
 		var parentSettings = {

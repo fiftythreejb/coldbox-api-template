@@ -40,7 +40,7 @@ component displayname="PeopleDao" accessors="true" extends="base.models.dao" sin
 		arguments.referenceBean.setFirstName('Test');
 		arguments.referenceBean.setLastName('Admin');
 		arguments.referenceBean.setEmail('admin@coldbox.org');
-		arguments.referenceBean.setPasswordHash('admin');
+		arguments.referenceBean.setPasswordHash('Admin');
 		arguments.referenceBean.setSalt('salt');
 		return;
 		// END TESTING
