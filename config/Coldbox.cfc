@@ -133,12 +133,24 @@
 						fileMaxArchives : 3
 					},
 					levelMax : '2'
+				},
+				cfConsole : {
+					class : "ConsoleAppender",
+					levelMax : '2'
 				}
 			},
 			// Root Logger
-			root      : { levelmax : "DEBUG", appenders : "*" },
+			root      : { levelmax : "DEBUG", appenders : "debugLog,errorLog" },
+			info      : [ "coldbox.system" ],
 			// Implicit Level Categories
-			info      : [ "coldbox.system" ]
+			categories : {
+				"coldbox.system" = { levelMin="FATAL", levelMax="WARN", appenders="cfConsole"},
+        		"model.security" = { levelMax="WARN", appenders="cfConsole"},
+				"handlerLog" : {
+				  appenders: "cfConsole",
+				  levelMax: "DEBUG"
+				}
+			}
 		};
 
 		/**

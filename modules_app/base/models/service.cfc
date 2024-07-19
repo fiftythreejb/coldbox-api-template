@@ -1,5 +1,5 @@
 
-component displayname="base.service" accessors="true" singleton {
+component displayname="base.service" accessors="true" {
 
 	property name="cacheFactory" inject="cacheBox";
 	property name="entityName" default="";
@@ -64,6 +64,39 @@ component displayname="base.service" accessors="true" singleton {
 			// it does exist, update the record
 			getDao().update( arguments.referenceBean );
 		}
+	}
+
+	
+	private any function setCachedData(
+		any required dataObj, 
+		struct dataArguments = {},
+		boolean clearCache = false,
+		string cacheTime = '60'
+	) {
+		// set the cache item name
+		var cacheItemName = hash( serializeJson( arguments.dataArguments ), 'MD5', 'UTF-8' );
+
+		// check if we're not clearing the cache
+		if( !arguments.clearCache ) {
+			// we aren't, get the query from the cache
+			var cachedData = getModelCache().get( cacheItemName );
+
+			// check if we have this query cached
+			if( !isNull( cachedData ) ) {
+				// we do, return the cached query
+				return cachedData;
+			}
+		}
+
+		// we don't have a cached query or aren't using cache, get the data from the dao
+		getModelCache().set(
+			cacheItemName,
+			arguments.dataObj,
+			arguments.cacheTime
+		);
+		
+		// return the query from the dao
+		return arguments.dataObj;
 	}
 
 }

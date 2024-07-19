@@ -19,12 +19,16 @@ component accessors="true" {
 	}
 
 	/**
-	 * Get an object from the store, or null if not found
-	 *
-	 * @objectKey The key to retrieve
-	 */
-	public any function get( required objectKey ){		
-		return cacheGet( getEntity() & arguments.objectKey );
+	* @displayname 	get
+	* @description 	I get an entity from the entities cache
+	* @itemName 	I am the name of the item stored in cache
+	* @return		any
+	*/
+	public any function get(
+		required string itemName
+	) {
+		// do a standard cacheGet() for this entities cache region
+		return cacheGet( getEntity() & arguments.itemName );
 	}
 
 

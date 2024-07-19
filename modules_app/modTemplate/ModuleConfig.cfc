@@ -67,29 +67,48 @@ component {
 	 * Configure the module
 	 */
 	function configure(){
+		
+		var logBox = application.cbController.getLogBox().getConfig();
+		logBox.appender(
+			name = 'modTemplateAppender', 
+			class = "RollingFileAppender",
+			properties = {
+				filePath: "logs",
+				fileName: "modTemplate",
+				autoExpand: true,
+				fileMaxSize: 2000,
+				fileMaxArchives: 3
+			},
+			levelMax = '3'
+		);
+		logBox.category(
+			name = "modTemplate",
+			appenders = "modTemplateAppender,cfConsole",
+			levelMax = "DEBUG"
+		);
 
 		layoutSettings = { defaultLayout : "", defaultView : "" };
 
 		// parent settings
-		var parentSettings = {
+		parentSettings = {
 		};
 
 		// module settings - stored in modules.name.settings
-		var settings = {
+		settings = {
 		};
 
 		// Layout Settings
-		var layoutSettings = {
+		layoutSettings = {
 			defaultLayout = ""
 		};
 
 		// Custom Declared Points
-		var interceptorSettings = {
+		interceptorSettings = {
 			customInterceptionPoints = []
 		};
 
 		// Custom Declared Interceptors
-		var interceptors = [
+		interceptors = [
 		];
 
 		// Binder Mappings

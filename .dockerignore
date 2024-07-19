@@ -15,7 +15,7 @@ _postman
 
 # logs + tests
 tests/results/**
-logs/
+# logs/
 
 ## JB Tests
 modules_app/modTemplate
