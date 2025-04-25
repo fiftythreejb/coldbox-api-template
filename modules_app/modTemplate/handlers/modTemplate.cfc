@@ -16,7 +16,7 @@ component extends="coldbox.system.RestHandler" accessors="true" {
 	function index(event, rc, prc){
 		arguments.event.paramValue("page", 1);
 		arguments.event.paramValue("maxRows", 10);
-		handlerLog.error('moduleLog Test log', {data: rc});
+		moduleLog.error('moduleLog Test log', {data: rc});
 		// can setup and pass filter arguments here as well
 		arguments.event.getResponse().setData(modTemplateService.filter(
 			start = rc.page ? rc.page * rc.maxRows - rc.maxRows : 0,
