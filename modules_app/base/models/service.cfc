@@ -13,7 +13,6 @@ component displayname="base.service" accessors="true" {
 			getCacheFactory().addDefaultCache(getEntityName());
 		}
 		setModelCache(getCacheFactory().getCache(getEntityName())); 
-		
 		return this;
 	}
 
@@ -23,8 +22,8 @@ component displayname="base.service" accessors="true" {
 	 * @referenceBean any						 The bean (by reference)
 	 *
 	 */
-	public void function load(required any referenceBean) {
-		getDao().read(argumentCollection = arguments);
+	public void function load( required any referenceBean ) {
+		getDao().read( argumentCollection = arguments );
 	}
 
 	/**
@@ -33,9 +32,7 @@ component displayname="base.service" accessors="true" {
 	 * @referenceBean any						 The bean (by reference)
 	 */
 	public void function remove( required any referenceBean ) {
-
 		getDao().delete( argumentCollection = arguments );
-
 	}
 
 	/**
@@ -65,16 +62,26 @@ component displayname="base.service" accessors="true" {
 			getDao().update( arguments.referenceBean );
 		}
 	}
-
-	
+	/**
+	 * I set and return cached data
+	 *
+	 * @return any
+	 */
 	private any function setCachedData(
 		any required dataObj, 
 		struct dataArguments = {},
 		boolean clearCache = false,
-		string cacheTime = '60'
+		string cacheTime = '60',
+		string cacheItemName = ''
 	) {
-		// set the cache item name
-		var cacheItemName = hash( serializeJson( arguments.dataArguments ), 'MD5', 'UTF-8' );
+		// duplicate the arguments
+		var args = duplicate( arguments.dataArguments );
+		// remove cache arguments from duplicate
+		structDelete( args, 'clearCache' );
+		structDelete( args, 'cacheTime' );
+		
+		// set the cache item n ame
+		var cacheItemName = arguments.cacheItemName.len()? arguments.cacheItemName : hash( serializeJson( args ), 'MD5', 'UTF-8' );
 
 		// check if we're not clearing the cache
 		if( !arguments.clearCache ) {
@@ -87,16 +94,23 @@ component displayname="base.service" accessors="true" {
 				return cachedData;
 			}
 		}
+		
+		// need to carefully set the dao because the scope of functions passed by reference is disconnected from their class
+		var objectData = arguments.dataObj;
+		if (isCustomFunction(arguments.dataObj)) {
+			args.dsn = getDao().getDsn();
+            objectData = arguments.dataObj(argumentCollection = args);
+		}
 
 		// we don't have a cached query or aren't using cache, get the data from the dao
 		getModelCache().set(
 			cacheItemName,
-			arguments.dataObj,
+			objectData,
 			arguments.cacheTime
 		);
 		
 		// return the query from the dao
-		return arguments.dataObj;
+		return objectData;
 	}
 
 }

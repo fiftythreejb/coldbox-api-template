@@ -42,7 +42,7 @@ component singleton accessors="true" extends="base.models.dao" displayname="ModT
 					isActive	= {cfsqltype="bit", value=arguments.referenceBean.getIsActive()},
 				},
 				{
-					datasource = getDsn()
+					datasource = dsn.schema
 				}
 			).id
 		);
@@ -78,7 +78,7 @@ component singleton accessors="true" extends="base.models.dao" displayname="ModT
 				id = { cfsqltype="integer", value=arguments.referenceBean.getId() }
 			},
 			{
-				datasource = getDsn()
+				datasource = dsn.schema
 			}
 		);
 
@@ -118,7 +118,7 @@ component singleton accessors="true" extends="base.models.dao" displayname="ModT
 				isActive	= { cfsqltype="bit", value="#arguments.referenceBean.getIsActive()#" },
 			},
 			{
-				datasource = getDsn()
+				datasource = dsn.schema
 			}
 		);
 	}
@@ -151,7 +151,8 @@ component singleton accessors="true" extends="base.models.dao" displayname="ModT
 			[
 				{"id":1,"title":"Do not include this in your code!"},
 				{"id":2,"title":"copy and modify this module"},
-				{"id":3,"title":"Use this as a template for your own modules"}
+				{"id":3,"title":"Use this as a template for your own modules"},
+				{"id":4,"title":"Test CF Code Updates"}
 			]
 		);
 		return dummyQuery;
@@ -159,7 +160,7 @@ component singleton accessors="true" extends="base.models.dao" displayname="ModT
 
 		var sql = "SELECT #arguments.returnColumns# FROM modTemplate WHERE 1 = 1 ";
 		var params = {};
-		var options = { datasource = getDsn() };
+		var options = { datasource = dsn.schema };
 
 		if( structKeyExists( arguments, "id" ) ) {
 			sql &= "AND id = :id ";
@@ -190,7 +191,19 @@ component singleton accessors="true" extends="base.models.dao" displayname="ModT
 		}
 
 		if( structKeyExists( arguments, "pagination" ) AND arguments.pagination ) {
-			sql &= "LIMIT #arguments.length# OFFSET #arguments.start#;";
+			params['start'] = { cfsqltype="numeric", value=arguments.start};
+			params['end'] = {cfsqltype="numeric", value=(arguments.start + arguments.length)};
+			
+			var pagedSQL = "
+				SELECT *
+				FROM (SELECT r.*, ROWNUM as rNum, COUNT(*) OVER () result_count 
+					FROM (
+						#sql#
+					) r
+				)
+				WHERE rNum >= :start AND rNum <= :end 
+			";
+			sql = pagedSQL;
 		}
 
 		// execute the query and return results
@@ -220,7 +233,7 @@ component singleton accessors="true" extends="base.models.dao" displayname="ModT
 					id = { cfsqltype="integer", value="#arguments.referenceBean.getId()#" }
 				},
 				{
-					datasource = getDsn()
+					datasource = dsn.schema
 				}
 			).recordCount gt 0
 		) {

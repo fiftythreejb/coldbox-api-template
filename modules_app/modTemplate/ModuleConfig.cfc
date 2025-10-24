@@ -67,8 +67,9 @@ component {
 	 * Configure the module
 	 */
 	function configure(){
-		
+
 		var logBox = application.cbController.getLogBox().getConfig();
+
 		logBox.appender(
 			name = 'modTemplateAppender', 
 			class = "RollingFileAppender",
@@ -81,6 +82,7 @@ component {
 			},
 			levelMax = '3'
 		);
+
 		logBox.category(
 			name = "modTemplate",
 			appenders = "modTemplateAppender,cfConsole",
@@ -95,6 +97,10 @@ component {
 
 		// module settings - stored in modules.name.settings
 		settings = {
+			envSettings: {
+				ENVIRONMENT:  getSystemSetting("ENVIRONMENT", ""),
+				APPNAME:  getSystemSetting("APPNAME", "")
+			}
 		};
 
 		// Layout Settings

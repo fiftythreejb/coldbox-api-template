@@ -1,4 +1,4 @@
-component output="false" displayname="base.bean" accessors="true"  {
+component output="false" displayname="base.bean" accessors="true" {
 
 	/**
 	* @displayname  getUidHash
@@ -189,7 +189,7 @@ component output="false" displayname="base.bean" accessors="true"  {
 	*
 	* @return		any
 	*/
-	public any function populate( required struct beanData, required array decryptFields = [] ) {
+	public any function populate( required any beanData, required array decryptFields = [] ) {
 		var propertyValue = '';
 		var colKey = '';
 		var colKeyNoUnderscores = '';
@@ -205,14 +205,18 @@ component output="false" displayname="base.bean" accessors="true"  {
 		// get component columns as array from the cache
 		var beanColumnArray = getColumnArray();
 
-		// loop through the components properties to assign properties values based on input struct
-		for( colKey in arguments.beanData ) {
-			// remove d_ from field names if there are any
-			var d_Index = colKey.listFindNoCase('d', '_');
-			colKeyNoUnderscores = d_Index > 0 ? listDeleteAt(colKey, d_Index, '_') : colKey;
-			
+		// loop through the components properties to assign properties values based on input struct or query
+		if (isValid('struct', arguments.beanData)) {
+			var dataObj = arguments.beanData;
+		} else if (isValid('query', arguments.beanData)) {
+			var dataObj = arguments.beanData.getColumnNames();
+		} else {
+			throw('invalid bean datatype, cannot populate');
+		}
+
+		for( colKey in dataObj ) {
 			// remove _ from field names if there are any
-			colKeyNoUnderscores = find( '_', colKeyNoUnderscores ) ? replace( colKeyNoUnderscores, '_', '', 'ALL' ) : colKeyNoUnderscores;
+			colKeyNoUnderscores = find( '_', colKey ) ? replace( colKey, '_', '', 'ALL' ) : colKey;
 
 			// check if the attribute exists in the input struct
 			if( beanColumnArray.findNoCase( colKeyNoUnderscores ) and len( trim( arguments.beanData[ colKey ] ) ) ) {
@@ -241,7 +245,9 @@ component output="false" displayname="base.bean" accessors="true"  {
 
 		// loop through the components properties to build memento struct
 		for( metaProperty in metaData.properties ) {
-			memento[ metaProperty.name ] = variables[ metaProperty.name ];
+			if (variables.keyExists( metaProperty.name)) {
+				memento[ metaProperty.name ] = variables[ metaProperty.name ];
+			}
 		}
 
 		return memento;

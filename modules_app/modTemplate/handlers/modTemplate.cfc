@@ -11,18 +11,52 @@ component extends="coldbox.system.RestHandler" accessors="true" {
 	property name="moduleLog" inject="logbox:logger:modTemplate";
 
 	/**
+	 * HTML that will be the base for running the utility
+	 */
+	function entry(event, rc, prc) {
+		event.setView( view="entry", noLayout = true);
+	}
+
+	/**
 	 * Return the collection of modTemplate
 	 */
 	function index(event, rc, prc){
+		if (!rc.keyExists('param1') || !isValid('date', rc.param1)) {
+			var statusCode = arguments.event.status.BAD_REQUEST;
+			event.getResponse()
+				.setError(true)
+				.addMessage("Please provide valid param1 values.")
+				.setStatus(statusCode, event.getResponse().status_texts[statusCode]);
+			return;
+		}
+
 		arguments.event.paramValue("page", 1);
 		arguments.event.paramValue("maxRows", 10);
+
+		// logging
 		moduleLog.error('moduleLog Test log', {data: rc});
-		// can setup and pass filter arguments here as well
-		arguments.event.getResponse().setData(modTemplateService.filter(
-			start = rc.page ? rc.page * rc.maxRows - rc.maxRows : 0,
-			length = rc.maxRows,
-			pagination = true
-		)).setPagination(maxRows = rc.maxRows, page = rc.page);
+		moduleLog.getRootLogger().warn('test warning log');
+		
+		// Pagination
+		event.paramValue("page", 1);
+		event.paramValue("maxRows", 500);
+		var args = duplicate(rc);
+		args.pagination = true;
+		args.length = rc.maxRows;
+		args.start = rc.page > 1 ? rc.page * rc.maxRows - rc.maxRows + 1 : 1;
+
+		var results = modTemplateService.filter(argumentCollection = args);
+		var totalPages = !results.result_count > rc.maxRows ? 0 : ceiling(results.result_count / rc.maxRows);
+
+		arguments.event.getResponse()
+			.setData(results)
+			.setPagination(
+				maxRows = rc.maxRows, 
+				page = rc.page,
+				offset = args.start,
+				totalRecords = results.result_count,
+				totalPages = totalPages
+		);
 	}
 
 	/**
@@ -42,37 +76,19 @@ component extends="coldbox.system.RestHandler" accessors="true" {
 	function show(event, rc, prc) secured {
 		arguments.event.paramValue("id", 0);
 		var newBean = variables.modTemplateService.loadById(id = arguments.rc.id);
-
-		if (!newBean.getId() > 0) {
-			var statusCode = arguments.event.status.NO_CONTENT;
-			event.getResponse()
-				.setError(true)
-				.setStatus(statusCode, event.getResponse().status_texts[statusCode]);
-			return event.getResponse().status_texts[statusCode];
-		}
-		
 		arguments.event.getResponse().setData(newBean.getMemento());
 	}
 
 	/**
-	 * Update a modTemplate
+	 * Update or create based on record existence a modTemplate
 	 */
-	function update(event, rc, prc) secured {
+	function save(event, rc, prc) secured {
 		arguments.event.paramValue("id", 0);
 		arguments.event.paramValue("title", '');
-
-		if (!rc.id > 0 || !rc.title.len() > 0) {
-			var statusCode = arguments.event.status.BAD_REQUEST;
-			event.getResponse()
-				.setError(true)
-				.setStatus(statusCode, event.getResponse().status_texts[statusCode]);
-			return;
-		}
-
+		
 		var newBean = variables.modTemplateService.getBean();
-		newBean.setId(arguments.rc.id);
-		newBean.setTitle(arguments.rc.title);
-		variables.modTemplateService.save(referenceBean = newBean, forceUpdate = true);
+		populateModel(model = newBean, memento = rc, ignoreEmpty = true);
+		variables.modTemplateService.save(referenceBean = newBean);
 		
 		arguments.event.getResponse().setData(newBean.getMemento());
 	}
@@ -83,19 +99,9 @@ component extends="coldbox.system.RestHandler" accessors="true" {
 	function delete(event, rc, prc) secured {
 		return;// not implemented
 		arguments.event.paramValue("id", 0);
-
-		if (!rc.id > 0) {
-			var statusCode = arguments.event.status.BAD_REQUEST;
-			event.getResponse()
-				.setError(true)
-				.setStatus(statusCode, event.getResponse().status_texts[statusCode]);
-			return;
-		}
-
 		var newBean = variables.modTemplateService.getBean();
 		newBean.setId(arguments.rc.id);
 		variables.modTemplateService.remove(referenceBean = newBean);
 	}
-
 }
 

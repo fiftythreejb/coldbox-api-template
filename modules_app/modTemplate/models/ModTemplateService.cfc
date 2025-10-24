@@ -4,7 +4,9 @@
 component singleton accessors="true" extends="base.models.service" displayname="ModTemplateService"{
 
 	// Properties
-	property name="dao" lazy; // coldbox lazy load of dao
+	// property name="dao" lazy; // coldbox lazy load of dao
+	property name="dao" inject="ModTemplateDao@modTemplate";
+	property name="defaultCacheTime" type="string" default="60"; // 1hours	
 
 /************************
 	PUBLIC
@@ -45,9 +47,6 @@ component singleton accessors="true" extends="base.models.service" displayname="
 	 */
 	public query function filter(
 		string returnColumns = "list, of, columns",
-		boolean cache = true,
-		boolean clearCache = false,
-		string cacheTime = '60',
 		numeric id,
 		date createdOn,
 		date updatedOn,
@@ -56,9 +55,11 @@ component singleton accessors="true" extends="base.models.service" displayname="
 		string orderBy,
 		boolean pagination = false,
 		numeric start,
-		numeric length
+		numeric length,
+		boolean cache = false,
+		boolean clearCache = false,
+		string cacheTime = '60'
 	) {
-		// check if we're caching the query
 		if( arguments.cache ) {
 			// duplicate the arguments
 			var args = duplicate( arguments );
@@ -67,37 +68,35 @@ component singleton accessors="true" extends="base.models.service" displayname="
 			structDelete( args, 'cache' );
 			structDelete( args, 'clearCache' );
 			structDelete( args, 'cacheTime' );
+			// handlew pagination after cache
+			structDelete( args, 'pagination' );
+			structDelete( args, 'start' );
+			structDelete( args, 'length' );
+			structDelete( args, 'page' );
 
-			// set the cache item name
-			var cacheItemName = hash( serializeJson( args ), 'MD5', 'UTF-8' );
-
-			// check if we're not clearing the cache
-			if( !arguments.clearCache ) {
-				// we aren't, get the query from the cache
-				var cachedQuery = getModelCache().get( cacheItemName );
-				// check if we have this query cached
-				if( !isNull( cachedQuery ) ) {
-					// we do, return the cached query
-					return cachedQuery;
-				}
-			}
-		}
-
-		// we don't have a cached query or aren't using cache, get the data from the dao
-		var cachedQuery = getDao().filter( argumentCollection = arguments );
-
-		// check if we're caching this query
-		if( arguments.cache ) {
-			// we are, set this query into the cache
-			getModelCache().set(
-				objectKey = cacheItemName,
-				object = cachedQuery,
-				timeout = arguments.cacheTime
+			var returnData = setCachedData(
+				dataObj = getDao().filter, 
+				dataArguments = args,
+				clearCache = arguments.clearCache,
+				cacheTime = arguments.cacheTime
 			);
-		}
 
-		// return the query from the dao
-		return cachedQuery;
+			var lengthResult = arguments.length;
+			var resultStart = arguments.start;
+			var getRowCount = returnData.recordCount;
+			if (arguments.pagination && getRowCount > lengthResult) {
+				returnData = returnData.filter(function(row, current) {
+					return current >= resultStart && current <= resultStart + (lengthResult-1);
+				});
+			}
+			
+			if (!isDefined('returnData.result_count')) {
+				returnData.addColumn("result_count", "numeric", [getRowCount]);
+			}
+
+			return returnData;
+		}
+		return getDao().filter(argumentCollection = arguments);
 	}
 
 	/**
@@ -120,9 +119,9 @@ component singleton accessors="true" extends="base.models.service" displayname="
 	/**
 	 * Build a Dao object lazyily, by convention.
 	 * The first time you call it, it will lock, build it, and store it by convention as 'variables.dao'
+		private function buildDao(){
+			return new modTemplate.models.ModTemplateDao();
+		}
 	 */
-	private function buildDao(){
-		return new modTemplate.models.ModTemplateDao();
-	}
 
 }
