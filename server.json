@@ -1,5 +1,5 @@
 {
-    "name":"api_template",
+    "name":"${APPNAME}",
     "web":{
         "rewrites":{
             "enable":true
